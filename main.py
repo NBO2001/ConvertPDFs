@@ -1,58 +1,66 @@
+try:
 
-import datetime
-import sys
-from os import (walk)
-from PyPDF2 import (PdfFileReader, PdfFileWriter)
-from time import time
-from datetime import (date, datetime)
-
-
-def create_arq_with_metadado(file, datas):
-
-    olderArq = open(file, 'rb')
-    olderDocument = PdfFileReader(olderArq)
-
-    write_arq = PdfFileWriter()
-
-    for page in range(olderDocument.getNumPages()):
-        # Add pages in document
-        write_arq.addPage(olderDocument.getPage(page))
+    from tkinter import Tk
+    from os import (walk)
+    from PyPDF2 import (PdfFileReader, PdfFileWriter)
+    from time import time
+    from datetime import (date, datetime)
+    from src.xlsx_create import ( new_xml )
+    from src.xlsx_read import ( readfile )
+    from src.metadadosadd import MetadadosAdd
+    from src.converterpdf import ConverterPDF
+    from src.utils import (
+        file_is_exists, 
+        create_folder, 
+        folder_is_exists, 
+        file_remove,
+        folder_remove)
     
+except Exception as e:
+    print(e)
+
+
+def for_pdf_a(file):
+
+    conv = ConverterPDF(f'./proc/{file}',f'./safe/{file}')
+    conv.converter()
+
+
+
+if not file_is_exists('list.xlsx') or not folder_is_exists("./proc") or not folder_is_exists("./safe") :
+    new_xml()
+    create_folder("proc")
+    create_folder("safe")
+else:
+
+    files = readfile()
+
+    for file in files:
+
+        file_name, title, subject, keywd = file
+
+        olderArq = open(file_name, 'rb')
+
+        olderDocument = PdfFileReader(olderArq)
+   
+        meta = MetadadosAdd(olderDocument, {
+            "Author": "Natanael B",
+            "Title": title,
+            "Subject": subject,
+            "keys": keywd,
+            "location": "Manaus - AM"
+        })
+        meta.create_file(f'./proc/{file_name}')
+        olderArq.close()
+
+        file_remove(f'./{file_name}')
+
+        for_pdf_a(file_name)
+        
+        file_remove(f'./proc/{file_name}')
+
+
+    file_remove('./list.xlsx')    
+    folder_remove(f'./proc')
+
     
-
-    write_arq.addMetadata({
-    '/Author': datas['Author'],
-    '/Title': datas['Title'],
-    '/Subject': datas['Subject'],
-    '/Keywords': datas['keys'],
-    '/Producer': 'NBOScripts - ConvertPDFs',
-    '/Creator': 'https://github.com/NBO2001/ConvertPDFs',
-    '/CreationDate': (datetime.now()).strftime("%Y%m%d%H%M%S")
-    })
-
-    name = f'{file.split(".")[0]} V2.pdf'
-    newFile = open(name, 'wb')   
-
-    write_arq.write(newFile)
-    olderArq.close()
-
-    newFile.close()
-
-
-
-
-
-for path, subpath, files in walk("./"):
-
-    for file in files:    
-        extension = file.split(".")[len(file.split("."))-1]
-
-        if extension.upper() == "PDF":
-
-            create_arq_with_metadado(file, {
-                "Author": "Natanael B",
-                "Title": "WO 64984611",
-                "Subject": "Work Order the Dezembro",
-                "keys": "WO, 2021, Work Order, DEZEMBRO",
-            })
-            
