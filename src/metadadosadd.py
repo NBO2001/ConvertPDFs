@@ -3,7 +3,7 @@ from datetime import (datetime)
 
 
 class MetadadosAdd:
-    def __init__(self, olderDocument, datas):
+    def __init__(self, olderDocument, datas: object) -> None:
         self.datas = datas
         
         self.validate_datas()
@@ -11,7 +11,7 @@ class MetadadosAdd:
         self.document = olderDocument
         
 
-    def create_file(self, save_in):
+    def create_file(self, save_in: str) -> None:
         self.write_arq = PdfFileWriter()
 
         for page in range(self.document.getNumPages()):
@@ -27,7 +27,7 @@ class MetadadosAdd:
         newFile.close()
 
 
-    def validate_datas(self):
+    def validate_datas(self) -> None:
         if self.datas:
             if ( not self.datas['Author'] 
             or not self.datas['Title']
@@ -36,7 +36,7 @@ class MetadadosAdd:
             or not self.datas['location']):
                 raise TypeError(f'Required data not found')
 
-    def insert_metadata(self):
+    def insert_metadata(self) -> None:
 
         self.write_arq.addMetadata({
         '/Author': self.datas['Author'],

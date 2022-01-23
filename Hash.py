@@ -1,13 +1,13 @@
-import hashlib
-import mmap
+from hashlib import (sha1)
+from mmap import mmap
 from os import (walk)
 
-def createHash(filename):
+def createHash(filename: str):
 
-    h  = hashlib.sha1()
+    h  = sha1()
 
     with open(filename, 'rb') as f:
-        with mmap.mmap(f.fileno(), 0, prot=mmap.PROT_READ) as mm:
+        with mmap(f.fileno(), 0, prot=mmap.PROT_READ) as mm:
             h.update(mm)
     return h.hexdigest()
 

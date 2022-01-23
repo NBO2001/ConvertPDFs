@@ -20,7 +20,7 @@ def verify_file(file, factor_validation):
 
         return (False, name, extension)
 
-def file_remove(location):
+def file_remove(location: str):
     remove(location)
 
 def folder_remove(location):

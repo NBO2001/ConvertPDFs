@@ -3,10 +3,10 @@ from ghostscript import Ghostscript
 
 
 class ConverterPDF:
-    def __init__(self,file_input, file_output):
+    def __init__(self,file_input: str, file_output: str) -> None:
         self.args = [
                 "ps2pdf",
-                "-dPDFA","-dNOPAUSE", "-dBATCH", "-dSAFER","-dUseCIEColor", "-sProcessColorModel=DeviceCMYK",
+                "-dPDFA","-dNOPAUSE", "-dBATCH", "-dSAFER", "-sProcessColorModel=DeviceCMYK",
                 "-sDEVICE=pdfwrite","-sPDFACompatibilityPolicy=1",
                 f'-sOutputFile={file_output}',
                 "-c", ".setpdfwrite",
